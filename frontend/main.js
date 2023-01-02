@@ -7,6 +7,7 @@ const bdelete = document.getElementById("bdelete");
 const bcancel = document.getElementById("bcancel");
 const bsubmit = document.getElementById("bsubmit");
 
+//Inicializa lista
 async function init() {
     try {
         [employees, roles] = await Promise.all([
@@ -20,12 +21,13 @@ async function init() {
         formEl.addEventListener("submit", onSubmit);
 
     } catch (error) {
-        showError(error);
+        showError("Erro ao carregar!", error);
     }
 }
 
 init();
 
+//*****************************************/
 //Renderizando a lista com os elementos
 function selectItem(employee, li) {
     clearSelection();
@@ -38,10 +40,13 @@ function selectItem(employee, li) {
 
     bdelete.style.display = "inline";
     bcancel.style.display = "inline";
+    bsubmit.textContent = "Update";
 
 }
 
+//Limpa formulário
 function clearSelection() {
+    clearError();
     selectedItem = undefined;
     const li = listEl.querySelector(".selected");
     if (li) {
@@ -53,24 +58,42 @@ function clearSelection() {
     formEl.role_id.value = "";
     bdelete.style.display = "none";
     bcancel.style.display = "none";
+    bsubmit.textContent = "Create";
+
 
 }
 
+//Submete o formulário
 async function onSubmit(evt) {
     evt.preventDefault();
     const employeeData = {
         name: formEl.name.value,
         salary: formEl.salary.valueAsNumber,
         role_id: +formEl.role_id.value
+    };
+
+    if (!employeeData.name || !employeeData.salary || !employeeData.role_id) {
+        showError("Você precisa preencher todos os campos!");
+    } else {
+        if (selectedItem) {
+            const updatedItem = await updateEmployee(selectedItem.id, employeeData);
+            const i = employees.indexOf(selectedItem);
+            employees[i] = updatedItem;
+            rednderData();
+            selectItem(updatedItem, listEl.children[i]);
+        } else {
+            const createdItem = await createEmployee(employeeData);
+            employees.push(createdItem);
+            rednderData();
+            selectItem(createdItem, listEl.lastChild);
+            listEl.lastChild.scrollIntoView();
+        }
     }
 
-    const updatedItem = await updateEmployee(selectedItem.id, employeeData);
-    const i = employees.indexOf(selectedItem);
-    employees[i] = updatedItem;
-    rednderData();
-    selectItem(updatedItem, listEl.children[i]);
+
 }
 
+//Renderiza dados
 function rednderData() {
     listEl.innerHTML = "";
 
@@ -88,6 +111,7 @@ function rednderData() {
     }
 }
 
+//Renderiza roles
 function renderRoles() {
     for (const role of roles) {
         const option = document.createElement("option");
@@ -97,7 +121,15 @@ function renderRoles() {
     }
 }
 
-function showError(error) {
-    document.getElementById("errors").textContent = "Erro ao carregar os dados!";
-    console.error(error);
+//Mensagens de erro
+function showError(message, error) {
+    document.getElementById("errors").textContent = message;
+    if (error) {
+        console.error(error);
+    }
+}
+
+//Limpa erros
+function clearError() {
+    document.getElementById("errors").textContent = "";
 }

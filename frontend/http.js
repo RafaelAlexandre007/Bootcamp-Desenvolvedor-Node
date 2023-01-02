@@ -1,3 +1,4 @@
+//Retorna lista JSON
 function fetchJson(url, option) {
     return fetch(url, option).then((r) => {
         if (r.ok) {
@@ -8,6 +9,8 @@ function fetchJson(url, option) {
     });
 };
 
+//*********************************************/
+//Gerar lista
 function listEmployees() {
     return fetchJson("http://localhost:3000/employees");
 }
@@ -16,6 +19,7 @@ function listRoles() {
     return fetchJson("http://localhost:3000/roles");
 }
 
+//Atualizar
 function updateEmployee(id, employee) {
     return fetchJson(`http://localhost:3000/employees/${id}`, {
         method: "PUT",
@@ -24,23 +28,18 @@ function updateEmployee(id, employee) {
     });
 }
 
-/*
-//Criar 
-fetch(`http://localhost:3000/employees`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(employees)
-});
-
-//Atualizar
-fetch(`http://localhost:3000/employees/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(employees)
-});
+//Criar
+function createEmployee(employee) {
+    return fetchJson(`http://localhost:3000/employees`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee)
+    });
+}
 
 //Excluir
-fetch(`http://localhost:3000/employees/${id}`, {
-    method: "DELETE",
-});
-*/
+function deleteEmployee(id) {
+    return fetchJson(`http://localhost:3000/employees/${id}`, {
+        method: "DELETE"
+    });
+}
