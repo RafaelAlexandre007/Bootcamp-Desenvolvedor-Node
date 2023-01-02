@@ -9,20 +9,19 @@ const bsubmit = document.getElementById("bsubmit");
 
 //Inicializa lista
 async function init() {
-    try {
-        [employees, roles] = await Promise.all([
-            listEmployees(),
-            listRoles(),
-        ]);
-        renderRoles();
-        rednderData();
-        clearSelection();
-        bcancel.addEventListener("click", clearSelection);
-        formEl.addEventListener("submit", onSubmit);
 
-    } catch (error) {
-        showError("Erro ao carregar!", error);
-    }
+    [employees, roles] = await Promise.all([
+        listEmployees(),
+        listRoles(),
+    ]);
+    renderRoles();
+    rednderData();
+    clearSelection();
+    bcancel.addEventListener("click", clearSelection);
+    formEl.addEventListener("submit", onSubmit);
+    bdelete.addEventListener("click", onDelete);
+
+    //O tratamento de erro está sendo feito na função fetchJson em http.js.
 }
 
 init();
@@ -91,6 +90,17 @@ async function onSubmit(evt) {
     }
 
 
+}
+
+//Deleta o elemento selecionado
+async function onDelete() {
+    if (selectedItem) {
+        await deleteEmployee(selectedItem.id);
+        const i = employees.indexOf(selectedItem);
+        employees.splice(i, 1);
+        rednderData();
+        clearSelection();
+    }
 }
 
 //Renderiza dados

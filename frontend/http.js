@@ -6,22 +6,26 @@ function fetchJson(url, option) {
         } else {
             throw new Error(r.statusText);
         }
+    }).catch(error => {
+        showError("Error ao carregar dados", error);
+        throw error;
     });
 };
 
 //*********************************************/
+const baseUrl = "http://localhost:3000";
 //Gerar lista
 function listEmployees() {
-    return fetchJson("http://localhost:3000/employees");
+    return fetchJson(`${baseUrl}/employees`);
 }
 
 function listRoles() {
-    return fetchJson("http://localhost:3000/roles");
+    return fetchJson(`${baseUrl}/roles`);
 }
 
 //Atualizar
 function updateEmployee(id, employee) {
-    return fetchJson(`http://localhost:3000/employees/${id}`, {
+    return fetchJson(`${baseUrl}/employees/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(employee)
@@ -30,7 +34,7 @@ function updateEmployee(id, employee) {
 
 //Criar
 function createEmployee(employee) {
-    return fetchJson(`http://localhost:3000/employees`, {
+    return fetchJson(`${baseUrl}/employees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(employee)
@@ -39,7 +43,7 @@ function createEmployee(employee) {
 
 //Excluir
 function deleteEmployee(id) {
-    return fetchJson(`http://localhost:3000/employees/${id}`, {
+    return fetchJson(`${baseUrl}/employees/${id}`, {
         method: "DELETE"
     });
 }
